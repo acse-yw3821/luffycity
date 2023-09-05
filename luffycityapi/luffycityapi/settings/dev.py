@@ -15,7 +15,8 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 import sys
-sys.path.insert(0, str( BASE_DIR / "apps") )
+
+sys.path.insert(0, str(BASE_DIR / "apps"))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -25,7 +26,7 @@ SECRET_KEY = 'django-insecure-mgfuq*a=mwg*8inro^&+c2ub1dg8yf!n4)wb9+*i6re94ws840
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
@@ -37,10 +38,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'corsheaders',  # cors跨域子应用
+
     'home',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # cors跨域的中间件
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -49,6 +53,16 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# CORS的配置信息:
+# 方案1：
+# CORS_ORIGIN_WHITELIST = (
+#     'http://www.luffycity.cn:3000',
+# )
+# CORS_ALLOW_CREDENTIALS = False  # 不允许ajax跨域请求时携带cookie
+
+# 方案2：
+CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = 'luffycityapi.urls'
 
@@ -201,8 +215,6 @@ LOGGING = {
     }
 }
 
-
-
 # redis configration
 # 设置redis缓存
 CACHES = {
@@ -227,7 +239,7 @@ CACHES = {
         }
     },
     # 提供存储短信验证码
-    "sms_code":{
+    "sms_code": {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": "redis://:123456@127.0.0.1:6379/2",
         "OPTIONS": {

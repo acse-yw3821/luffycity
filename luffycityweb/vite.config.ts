@@ -18,7 +18,7 @@ export default defineConfig({
         proxy: {
             '/api': {
                 // 凡是遇到 /api 路径的请求，都映射到 target 属性  /api/header/  ---> http://api.luffycity.cn:8000/header/
-                target: 'http://api.luffycity.cn:8000/',
+                target: 'http://api.myluffycity.cn:8000/',
                 changeOrigin: true,
                 ws: true,    // 是否支持websocket跨域
                 rewrite: path => path.replace(/^\/api/, '')

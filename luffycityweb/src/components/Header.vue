@@ -7,7 +7,7 @@
         </div>
         <ul class="nav">
           <li v-for="nav in nav.header_nav_list">
-            <a href="nav.link" v-if="nav.is_http">{{ nav.name }}</a>
+            <a :href="nav.link" v-if="nav.is_http">{{ nav.name }}</a>
             <router-link :to="nav.link" v-else>{{ nav.name }}</router-link>
           </li>
 

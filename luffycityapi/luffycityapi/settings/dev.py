@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'corsheaders',  # cors跨域子应用
 
     'home',
+    'users'
 ]
 
 MIDDLEWARE = [
@@ -159,6 +160,8 @@ MEDIA_URL = "/uploads/"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+AUTH_USER_MODEL = 'users.User'
+
 
 # drf配置
 REST_FRAMEWORK = {
@@ -233,7 +236,7 @@ CACHES = {
         "BACKEND": "django_redis.cache.RedisCache",
         # 项目上线时,需要调整这里的路径
         # "LOCATION": "redis://:密码@IP地址:端口/库编号",
-        "LOCATION": "redis://:@127.0.0.1:6379/0",
+        "LOCATION": "redis://:AlwaysDay1@127.0.0.1:6379/0",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "CONNECTION_POOL_KWARGS": {"max_connections": 100},
@@ -242,7 +245,7 @@ CACHES = {
     # 提供给admin运营站点的session存储
     "session": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://:123456@127.0.0.1:6379/1",
+        "LOCATION": "redis://:AlwaysDay1@127.0.0.1:6379/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "CONNECTION_POOL_KWARGS": {"max_connections": 100},
@@ -251,7 +254,7 @@ CACHES = {
     # 提供存储短信验证码
     "sms_code": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://@127.0.0.1:6379/2",
+        "LOCATION": "redis://:AlwaysDay1@127.0.0.1:6379/2",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "CONNECTION_POOL_KWARGS": {"max_connections": 100},

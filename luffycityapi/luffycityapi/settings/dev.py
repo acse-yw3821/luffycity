@@ -177,10 +177,11 @@ REST_FRAMEWORK = {
 import datetime
 
 # jwt认证相关配置项
-JWT_AUTH = {
+SIMPLE_JWT = {
     # 设置jwt的有效期
     # 如果内部站点，例如：运维开发系统，OA，往往配置的access_token有效期基本就是15分钟，30分钟，1~2个小时
     'JWT_EXPIRATION_DELTA': datetime.timedelta(weeks=1),  # 一周有效，
+    "TOKEN_OBTAIN_SERIALIZER": "luffycityapi.utils.authenticate.MyTokenObtainPairSerializer",
 }
 
 # 日志配置

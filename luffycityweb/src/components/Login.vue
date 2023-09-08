@@ -46,7 +46,19 @@ const loginhandler = () => {
     "password": user.password,
   }).then(response => {
     ElMessage("登陆成功！");
-    console.log(response.data)
+
+    // 保存token，并根据用户的选择，是否记住密码
+    // 先删除之前存留的状态
+    sessionStorage.removeItem("token");
+    localStorage.removeItem("token");
+    const token = response.data.access;
+    if (user.remember) {
+      localStorage.token = token;
+    } else {
+      sessionStorage.token = token;
+    }
+
+    console.log(response.data.access)
   }).catch(error => {
     // console.log(error?.response?.data);
     ElMessage.error(error?.response?.data?.detail);

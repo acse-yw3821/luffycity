@@ -20,6 +20,15 @@ const routes = [
         name: "Login",
         component: () => import("../views/Login.vue")
     },
+     {
+        meta: {
+            title: "luffy2.0-用户注册",
+            keepAlive: true
+        },
+        path: '/register',      // uri访问地址
+        name: "Register",
+        component: () => import("../views/Register.vue")
+    },
     {
         meta: {
             title: "luffy2.0-个人中心",

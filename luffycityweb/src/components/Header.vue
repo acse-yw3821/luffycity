@@ -55,14 +55,14 @@
           <div class="login-box full-left">
             <span @click="state.show_login=true">登录</span>
             &nbsp;/&nbsp;
-            <span>注册</span>
+            <router-link to="/register">注册</router-link>
           </div>
         </div>
       </div>
     </div>
   </div>
   <el-dialog :width="600" v-model="state.show_login">
-    <Login @successhandle="login_success"></Login>
+    <Login @successhandle="login_success"/>
   </el-dialog>
 </template>
 
@@ -71,6 +71,7 @@
 import nav from "../api/nav.js"
 import {reactive} from "vue";
 import Login from "./Login.vue";
+import Register from "../views/Register.vue";
 import {UserFilled, List, Setting, Position} from '@element-plus/icons-vue';
 import {useStore} from "vuex";
 

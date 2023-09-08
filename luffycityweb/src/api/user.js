@@ -10,11 +10,15 @@ const user = reactive({
     mobile: "",
     code: "",
 
-    login(){
-        return http.post("/users/login/",{
+    login() {
+        return http.post("/users/login/", {
             "username": this.account,
             "password": this.password,
         })
+    },
+    check_mobile() {
+        // 验证手机号
+        return http.get(`/users/mobile/${this.mobile}/`)
     }
 })
 

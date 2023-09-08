@@ -66,7 +66,7 @@ const loginhandler = () => {
     // vuex存储用户登录信息，保存token，并根据用户的选择，是否记住密码
     let payload = response.data.access.split(".")[1]; // payload
     let payload_data = JSON.parse(atob(payload)); // 用户信息
-    console.log("payload_data:",payload_data);
+    // console.log("payload_data:",payload_data);
     store.commit("login", payload_data);
 
     // 关闭登陆窗口，通知父组件

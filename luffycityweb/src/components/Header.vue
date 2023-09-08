@@ -38,7 +38,7 @@
   </div>
 
   <el-dialog v-model="state.show_login" :width="600">
-    <Login></Login>
+    <Login @successhandle="login_success"></Login>
   </el-dialog>
 </template>
 
@@ -58,6 +58,11 @@ nav.get_header_nav().then(response => {
   // console.log(response.data);
   nav.header_nav_list = response.data;
 })
+
+// 用户登陆成功后的处理
+const login_success = () => {
+  state.show_login = false;
+}
 
 
 </script>

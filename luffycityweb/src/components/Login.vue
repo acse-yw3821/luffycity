@@ -30,7 +30,7 @@
 import {reactive} from "vue";
 import {ElMessage} from "element-plus";
 import user from "../api/user.js";
-
+const emit = defineEmits(["successhandle",])
 
 // 登陆函数
 const loginhandler = () => {
@@ -58,7 +58,15 @@ const loginhandler = () => {
       sessionStorage.token = token;
     }
 
-    console.log(response.data.access)
+    // 关闭登陆窗口，通知父组件
+    user.account="";
+    user.password="";
+    user.mobile="";
+    user.code="";
+    user.remember=false;
+
+    emit("successhandle");
+
   }).catch(error => {
     // console.log(error?.response?.data);
     ElMessage.error(error?.response?.data?.detail);

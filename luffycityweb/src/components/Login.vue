@@ -1,25 +1,25 @@
 <template>
   <div class="title">
-    <span :class="{active:state.login_type==0}" @click="state.login_type=0">密码登录</span>
-    <span :class="{active:state.login_type==1}" @click="state.login_type=1">短信登录</span>
+    <span :class="{active:user.login_type==0}" @click="user.login_type=0">密码登录</span>
+    <span :class="{active:user.login_type==1}" @click="user.login_type=1">短信登录</span>
   </div>
-  <div class="inp" v-if="state.login_type==0">
-    <input v-model="state.username" type="text" placeholder="用户名 / 手机号码" class="user">
-    <input v-model="state.password" type="password" class="pwd" placeholder="密码">
+  <div class="inp" v-if="user.login_type==0">
+    <input v-model="user.account" type="text" placeholder="用户名 / 手机号码" class="user">
+    <input v-model="user.password" type="password" class="pwd" placeholder="密码">
     <div id="geetest1"></div>
     <div class="rember">
       <label>
-        <input type="checkbox" class="no" name="a"/>
+        <input type="checkbox" class="no" v-model="user.remember"/>
         <span>记住密码</span>
       </label>
       <p>忘记密码</p>
     </div>
-    <button class="login_btn">登录</button>
+    <button class="login_btn" @click="loginhandler">登录</button>
     <p class="go_login">没有账号 <span>立即注册</span></p>
   </div>
-  <div class="inp" v-show="state.login_type==1">
-    <input v-model="state.username" type="text" placeholder="手机号码" class="user">
-    <input v-model="state.password" type="text" class="code" placeholder="短信验证码">
+  <div class="inp" v-show="user.login_type==1">
+    <input v-model="user.mobile" type="text" placeholder="手机号码" class="user">
+    <input v-model="user.code" type="text" class="code" placeholder="短信验证码">
     <el-button id="get_code" type="primary">获取验证码</el-button>
     <button class="login_btn">登录</button>
     <p class="go_login">没有账号 <span>立即注册</span></p>
@@ -28,12 +28,32 @@
 
 <script setup>
 import {reactive} from "vue";
+import {ElMessage} from "element-plus";
+import user from "../api/user.js";
 
-const state = reactive({
-  login_type: 0, // 登陆方式：0，密码登陆；1，短信登陆
-  username: "",
-  password: "",
-})
+
+// 登陆函数
+const loginhandler = () => {
+  if (user.account.length < 1 || user.password.length < 1) {
+    // 错误提示
+    ElMessage("用户名或密码不能为空！");
+    return false;
+  }
+
+  // 发送请求
+  user.login({
+    "username": user.account,
+    "password": user.password,
+  }).then(response => {
+    ElMessage("登陆成功！");
+    console.log(response.data)
+  }).catch(error => {
+    // console.log(error?.response?.data);
+    ElMessage.error(error?.response?.data?.detail);
+  })
+
+}
+
 </script>
 
 <style scoped>

@@ -233,7 +233,7 @@ CACHES = {
         "BACKEND": "django_redis.cache.RedisCache",
         # 项目上线时,需要调整这里的路径
         # "LOCATION": "redis://:密码@IP地址:端口/库编号",
-        "LOCATION": "redis://:123456@127.0.0.1:6379/0",
+        "LOCATION": "redis://:@127.0.0.1:6379/0",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "CONNECTION_POOL_KWARGS": {"max_connections": 100},

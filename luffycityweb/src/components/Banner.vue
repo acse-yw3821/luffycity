@@ -288,7 +288,7 @@
       <!-- 轮播图-->
       <div class="g-banner-content" @mouseover="state.current_menu=-1">
         <el-carousel :interval="5000" arrow="always" height="482px" v-if="banner.banner_list[0]">
-          <el-carousel-item v-for="item, key in banner.banner_list" :key="key">
+          <el-carousel-item v-for="item,key in banner.banner_list" :key="key">
             <a :href="item.link" v-if="item.is_http">
               <img :src="item.image" alt="" style="width: 100%;height: 100%;">
             </a>
@@ -722,7 +722,7 @@ banner.get_banner_list().then(response => {
   /* Firefox */
   image-rendering: -o-crisp-edges;
   /* Opera */
-  image-rendering: -webkit-optimize-contrast;
+  //image-rendering: -webkit-optimize-contrast;
   /*Webkit (non-standard naming) */
   image-rendering: crisp-edges;
   -ms-interpolation-mode: nearest-neighbor;

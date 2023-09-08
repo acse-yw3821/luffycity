@@ -1,5 +1,5 @@
-from rest_framework.generics import ListAPIView
-from rest_framework.response import Response
+# from rest_framework.generics import ListAPIView
+from views import CacheListAPIView
 from .serializers import NavModelSerializer, BannerModelSerializer
 from .models import Nav, Banner
 import constants
@@ -9,7 +9,7 @@ import logging
 logger = logging.getLogger("django")
 
 
-class NavHeaderListAPIView(ListAPIView):
+class NavHeaderListAPIView(CacheListAPIView):
     """顶部导航视图"""
 
     queryset = Nav.objects.filter(
@@ -18,7 +18,7 @@ class NavHeaderListAPIView(ListAPIView):
     serializer_class = NavModelSerializer
 
 
-class NavFooterListAPIView(ListAPIView):
+class NavFooterListAPIView(CacheListAPIView):
     """脚部导航视图"""
     queryset = Nav.objects.filter(
         position=constants.NAV_FOOTER_POSITION, is_show=True, is_deleted=False).order_by("orders", "-id")[
@@ -26,7 +26,7 @@ class NavFooterListAPIView(ListAPIView):
     serializer_class = NavModelSerializer
 
 
-class BannerListAPIView(ListAPIView):
+class BannerListAPIView(CacheListAPIView):
     """轮播广告视图"""
     queryset = Banner.objects.filter(is_deleted=False, is_show=True).order_by("orders", "-id")[:constants.BANNER_SIZE]
     serializer_class = BannerModelSerializer

@@ -1,20 +1,32 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from django_redis import get_redis_connection
+# from rest_framework.generics import ListAPIView
+from views import CacheListAPIView
+from .serializers import NavModelSerializer, BannerModelSerializer
+from .models import Nav, Banner
+import constants
 # 对日志调用
 import logging
 
 logger = logging.getLogger("django")
 
 
-# Create your views here.
-class HomeAPIView(APIView):
-    def get(self, request):
-        """测试代码，测试完成以后将来可以删除"""
-        # 测试日志功能
-        # logger.error("error信息")
-        # logger.info("info信息")
-        redis = get_redis_connection("sms_code")
-        brother = redis.lrange("brother", 0, -1)
-        return Response(brother, status.HTTP_200_OK)
+class NavHeaderListAPIView(CacheListAPIView):
+    """顶部导航视图"""
+
+    queryset = Nav.objects.filter(
+        position=constants.NAV_HEADER_POSITION, is_show=True, is_deleted=False).order_by("orders", "-id")[
+               :constants.NAV_HEADER_SIZE]
+    serializer_class = NavModelSerializer
+
+
+class NavFooterListAPIView(CacheListAPIView):
+    """脚部导航视图"""
+    queryset = Nav.objects.filter(
+        position=constants.NAV_FOOTER_POSITION, is_show=True, is_deleted=False).order_by("orders", "-id")[
+               :constants.NAV_FOOTER_SIZE]
+    serializer_class = NavModelSerializer
+
+
+class BannerListAPIView(CacheListAPIView):
+    """轮播广告视图"""
+    queryset = Banner.objects.filter(is_deleted=False, is_show=True).order_by("orders", "-id")[:constants.BANNER_SIZE]
+    serializer_class = BannerModelSerializer

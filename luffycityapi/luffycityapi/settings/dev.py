@@ -17,6 +17,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 import sys
 
 sys.path.insert(0, str(BASE_DIR / "apps"))
+sys.path.insert(0, str(BASE_DIR / "utils"))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -144,6 +145,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+# 设置django的静态文件目录[手动创建]
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
+# 项目中存储上传文件的根目录[手动创建]，注意，uploads目录需要手动创建否则上传文件时报错
+MEDIA_ROOT = BASE_DIR / "uploads"
+# 访问上传文件的url地址前缀
+MEDIA_URL = "/uploads/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -223,7 +233,7 @@ CACHES = {
         "BACKEND": "django_redis.cache.RedisCache",
         # 项目上线时,需要调整这里的路径
         # "LOCATION": "redis://:密码@IP地址:端口/库编号",
-        "LOCATION": "redis://:123456@127.0.0.1:6379/0",
+        "LOCATION": "redis://:@127.0.0.1:6379/0",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "CONNECTION_POOL_KWARGS": {"max_connections": 100},

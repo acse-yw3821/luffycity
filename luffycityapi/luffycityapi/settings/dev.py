@@ -174,6 +174,9 @@ REST_FRAMEWORK = {
     ),
 }
 
+# django自定义认证
+AUTHENTICATION_BACKENDS = ['luffycityapi.utils.authenticate.CustomAuthBackend', ]
+
 import datetime
 
 # jwt认证相关配置项

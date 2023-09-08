@@ -1,6 +1,5 @@
 <template>
   <Header></Header>
-  <h1>首页</h1>
   <div>
     <Banner></Banner>
   </div>

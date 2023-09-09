@@ -16,7 +16,7 @@
           <input v-model="user.re_password" type="password" placeholder="确认密码" class="user">
           <input v-model="user.code" type="text" class="code" placeholder="短信验证码">
           <el-button id="get_code" type="primary">获取验证码</el-button>
-          <button class="login_btn">注册</button>
+          <button class="login_btn" @click="registerhandler">注册</button>
           <p class="go_login">已有账号
             <router-link to="/login">立即登录</router-link>
           </p>
@@ -30,11 +30,13 @@
 
 import {reactive, defineEmits, watch} from "vue";
 import {useStore} from "vuex";
+import {useRouter} from "vue-router"
 import "../utils/TCaptcha.js"
 import user from "../api/user.js";
 import {ElMessage} from "element-plus";
 
 const store = useStore();
+const router = useRouter();
 
 // 监听数据mobile是否发生变化
 watch(() => user.mobile, (mobile, prevMobile) => {
@@ -45,6 +47,54 @@ watch(() => user.mobile, (mobile, prevMobile) => {
     })
   }
 })
+
+
+const registerhandler = () => {
+  if (!/1[3-9]\d{9}/.test(user.mobile)) {
+    ElMessage.error("手机号格式不正确！");
+    return false;
+  }
+
+  if (user.password.length < 0 || user.password.length > 16) {
+    ElMessage.error("密码必须在6～16个字符之间！");
+    return false;
+  }
+
+  if (user.password !== user.re_password) {
+    ElMessage.error("两次密码不一致！");
+    return false;
+  }
+
+  // 发送请求
+  user.register().then(response => {
+    // 保存token，并根据用户的选择，是否记住密码
+    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
+    // 默认不需要记住登陆
+
+    sessionStorage.token = response.data.token;
+
+    // vuex存储用户登陆信息
+    let payload = response.data.token.split(".")[1];
+    let payload_data = JSON.parse(atob(payload));
+    store.commit("login", payload_data);
+
+    // 清空表单信息
+    user.mobile = "";
+    user.code = "";
+    user.password = "";
+    user.re_password = "";
+    user.remember = false;
+
+    ElMessage.success("注册成功！");
+    // 路由跳转至首页
+    router.push("/");
+
+  }).catch(error => {
+    ElMessage.error("注册失败");
+  })
+
+}
 
 </script>
 

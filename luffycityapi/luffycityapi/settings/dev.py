@@ -284,3 +284,31 @@ CACHES = {
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 # 设置session保存的位置对应的缓存配置项
 SESSION_CACHE_ALIAS = "session"
+
+
+
+# 腾讯云API接口配置
+TENCENTCLOUD = {
+    # 腾讯云访问秘钥ID
+    "SecretId": "AKIDSggmeI7z2qSUHoaf18zb4JKdZv61PEZf",
+    # 腾讯云访问秘钥key
+    "SecretKey": "06xbzB7VabOyY3asztbkdIfqlovtLYXG",
+    # 验证码API配置
+    "Captcha": {
+        "endpoint": "captcha.tencentcloudapi.com", # 验证码校验服务端域名
+        "CaptchaType": 9,  # 验证码类型，固定为9
+        "CaptchaAppId": 2059674751,  # 验证码应用ID
+        "AppSecretKey": "04LwtDUlnQxumWnItAw4OPA**", # 验证码应用key
+    },
+}
+
+
+# 容联云短信
+RONGLIANYUN = {
+    "accId": '8a216da863f8e6c20164139687e80c1b',
+    "accToken": '6dd01b2b60104b3dbc88b2b74158bac6',
+    "appId": '8a216da863f8e6c20164139688400c21',
+    "reg_tid": 1,      # 注册短信验证码的模板ID
+    "sms_expire": 300, # 短信有效期，单位：秒(s)
+    "sms_interval": 60,# 短信发送的冷却时间，单位：秒(s)
+}

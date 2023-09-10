@@ -44,9 +44,10 @@ class UserRegisterModelSerializer(serializers.ModelSerializer):
             """获取不到验证码，则表示验证码已经过期了"""
             raise serializers.ValidationError("验证码失效或已过期！", code="sms_code")
         # 从redis提取的数据，字符串都是bytes类型，所以decode
-        # if code.decode() != data.get("sms_code"):
-        #     raise serializers.ValidationError(detail="短信验证码错误！", code="sms_code")
         print(f"code={code.decode()}, sms_code={data.get('sms_code')}")
+
+        if code.decode() != data.get("sms_code"):
+            raise serializers.ValidationError(detail="短信验证码错误！", code="sms_code")
         # 删除掉redis中的短信，后续不管用户是否注册成功，至少当前这条短信验证码已经没有用处了
         redis.delete(f"sms_{mobile}")
         return data

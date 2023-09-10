@@ -7,8 +7,8 @@ from .serializers import UserRegisterModelSerializer
 import random
 from django_redis import get_redis_connection
 from django.conf import settings
-from ronglianyunapi import send_sms
-
+# from ronglianyunapi import send_sms
+from mycelery.sms.tasks import send_sms
 
 class MobileAPIView(APIView):
     def get(self, request, mobile):
@@ -47,12 +47,16 @@ class SMSAPIView(APIView):
         # 短信发送间隔时间
         sms_interval = settings.RONGLIANYUN["sms_interval"]
         send_sms(settings.RONGLIANYUN.get("reg_tid"), mobile, datas=(code, time // 60))
+        # 异步方法发送短信
+        send_sms.delay(settings.RONGLIANYUN.get("reg_tid"), mobile, datas=(code, time // 60))
 
         # 记录code到redis中，并以time作为有效期
         # 使用redis提供的管道对象pipeline来优化redis的写入操作
         pipe = redis.pipeline()
         pipe.multi()  # 开启事务
         pipe.setex(f"sms_{mobile}", time, code)
+
         pipe.setex(f"interval_{mobile}", sms_interval, "_")
         pipe.execute()  # 提交事务，同时把暂存在pipeline的数据一次性提交给redis
+        print("短信验证码：", code)
         return Response({"errmsg": "OK"}, status=status.HTTP_200_OK)

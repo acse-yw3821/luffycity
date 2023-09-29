@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'corsheaders',  # cors跨域子应用
 
     'home',
+    'users'
 ]
 
 MIDDLEWARE = [
@@ -159,11 +160,31 @@ MEDIA_URL = "/uploads/"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+AUTH_USER_MODEL = 'users.User'
 
 # drf配置
 REST_FRAMEWORK = {
     # 自定义异常处理
     'EXCEPTION_HANDLER': 'luffycityapi.utils.exceptions.custom_exception_handler',
+    # 自定义认证
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',  # jwt认证
+        'rest_framework.authentication.SessionAuthentication',  # session认证
+        'rest_framework.authentication.BasicAuthentication',
+    ),
+}
+
+# django自定义认证
+AUTHENTICATION_BACKENDS = ['luffycityapi.utils.authenticate.CustomAuthBackend', ]
+
+import datetime
+
+# jwt认证相关配置项
+SIMPLE_JWT = {
+    # 设置jwt的有效期
+    # 如果内部站点，例如：运维开发系统，OA，往往配置的access_token有效期基本就是15分钟，30分钟，1~2个小时
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(weeks=1),  # 一周有效，
+    "TOKEN_OBTAIN_SERIALIZER": "luffycityapi.utils.authenticate.MyTokenObtainPairSerializer",
 }
 
 # 日志配置
@@ -233,7 +254,7 @@ CACHES = {
         "BACKEND": "django_redis.cache.RedisCache",
         # 项目上线时,需要调整这里的路径
         # "LOCATION": "redis://:密码@IP地址:端口/库编号",
-        "LOCATION": "redis://:@127.0.0.1:6379/0",
+        "LOCATION": "redis://:AlwaysDay1@127.0.0.1:6379/0",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "CONNECTION_POOL_KWARGS": {"max_connections": 100},
@@ -242,7 +263,7 @@ CACHES = {
     # 提供给admin运营站点的session存储
     "session": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://:123456@127.0.0.1:6379/1",
+        "LOCATION": "redis://:AlwaysDay1@127.0.0.1:6379/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "CONNECTION_POOL_KWARGS": {"max_connections": 100},
@@ -251,7 +272,7 @@ CACHES = {
     # 提供存储短信验证码
     "sms_code": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://@127.0.0.1:6379/2",
+        "LOCATION": "redis://:AlwaysDay1@127.0.0.1:6379/2",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "CONNECTION_POOL_KWARGS": {"max_connections": 100},
@@ -263,3 +284,63 @@ CACHES = {
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 # 设置session保存的位置对应的缓存配置项
 SESSION_CACHE_ALIAS = "session"
+
+# 腾讯云API接口配置
+TENCENTCLOUD = {
+    # 腾讯云访问秘钥ID
+    "SecretId": "AKIDSggmeI7z2qSUHoaf18zb4JKdZv61PEZf",
+    # 腾讯云访问秘钥key
+    "SecretKey": "06xbzB7VabOyY3asztbkdIfqlovtLYXG",
+    # 验证码API配置
+    "Captcha": {
+        "endpoint": "captcha.tencentcloudapi.com",  # 验证码校验服务端域名
+        "CaptchaType": 9,  # 验证码类型，固定为9
+        "CaptchaAppId": 2059674751,  # 验证码应用ID
+        "AppSecretKey": "04LwtDUlnQxumWnItAw4OPA**",  # 验证码应用key
+    },
+}
+
+# Celery异步任务队列框架的配置项[注意：django的配置项必须大写，所以这里的所有配置项必须全部大写]
+# 任务队列
+CELERY_BROKER_URL = 'redis://:AlwaysDay1@127.0.0.1:6379/14'
+# 结果队列
+CELERY_RESULT_BACKEND = 'redis://:AlwaysDay1@127.0.0.1:6379/15'
+# 时区，与django的时区同步
+CELERY_TIMEZONE = TIME_ZONE
+# 防止死锁
+CELERY_FORCE_EXECV = True
+# 设置并发的worker数量
+CELERYD_CONCURRENCY = 200
+# 设置失败允许重试[这个慎用，如果失败任务无法再次执行成功，会产生指数级别的失败记录]
+CELERY_ACKS_LATE = True
+# 每个worker工作进程最多执行500个任务被销毁，可以防止内存泄漏，500是举例，根据自己的服务器的性能可以调整数值
+CELERYD_MAX_TASKS_PER_CHILD = 500
+# 单个任务的最大运行时间，超时会被杀死[慎用，有大文件操作、长时间上传、下载任务时，需要关闭这个选项，或者设置更长时间]
+CELERYD_TIME_LIMIT = 10 * 60
+# 任务发出后，经过一段时间还未收到acknowledge, 就将任务重新交给其他worker执行
+CELERY_DISABLE_RATE_LIMITS = True
+# celery的任务结果内容格式
+CELERY_ACCEPT_CONTENT = ['json', 'pickle']
+
+# 之前定时任务（定时一次调用），使用了apply_async({}, countdown=30);
+# 设置定时任务（定时多次调用）的调用列表，需要单独运行SCHEDULE命令才能让celery执行定时任务：celery -A mycelery.main beat，当然worker还是要启动的
+# https://docs.celeryproject.org/en/stable/userguide/periodic-tasks.html
+from celery.schedules import crontab
+
+CELERY_BEAT_SCHEDULE = {
+    "user-add": {  # 定时任务的注册标记符[必须唯一的]
+        "task": "add",  # 定时任务的任务名称
+        "schedule": 10,  # 定时任务的调用时间，10表示每隔10秒调用一次add任务
+        # "schedule": crontab(hour=7, minute=30, day_of_week=1),,  # 定时任务的调用时间，每周一早上7点30分调用一次add任务
+    }
+}
+
+# 容联云短信
+RONGLIANYUN = {
+    "accId": '8a216da863f8e6c20164139687e80c1b',
+    "accToken": '6dd01b2b60104b3dbc88b2b74158bac6',
+    "appId": '8a216da863f8e6c20164139688400c21',
+    "reg_tid": 1,  # 注册短信验证码的模板ID
+    "sms_expire": 300,  # 短信有效期，单位：秒(s)
+    "sms_interval": 60,  # 短信发送的冷却时间，单位：秒(s)
+}

@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',  # cors跨域子应用
     'ckeditor',  # 富文本编辑器
+    'ckeditor_uploader',  # 富文本编辑器上传文件子用用
+    'stdimage',  # 生成缩略图
 
     'home',
     'users',
@@ -368,3 +370,18 @@ CKEDITOR_CONFIGS = {
         'height': 120,
     },
 }
+
+# admin站点公共配置
+from django.contrib import admin
+
+admin.AdminSite.site_header = '浮光在线'
+admin.AdminSite.site_title = '浮光在线教育站点管理'
+# 登录界面logo
+SIMPLEUI_LOGO = '/uploads/logo.svg'
+
+# 关闭simpleui内置的使用分析
+SIMPLEUI_ANALYSIS = False
+# 离线模式
+SIMPLEUI_STATIC_OFFLINE = True
+# 首页图标地址
+SIMPLEUI_INDEX = 'http://www.myluffycity.cn:3000/'

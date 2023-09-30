@@ -72,7 +72,7 @@ admin.site.register(CourseCategory, CourseCategoryModelAdmin)
 
 class CourseModelAdmin(admin.ModelAdmin):
     """讲师信息的模型管理器"""
-    list_display = ["id", "name", 'course_cover', "course_type", "level", "pub_date", "students", "lessons", "price"]
+    list_display = ["id", "name", 'course_cover_small', "course_type", "level", "pub_date", "students", "lessons", "price"]
     list_per_page = 10
 
 
@@ -81,7 +81,7 @@ admin.site.register(Course, CourseModelAdmin)
 
 class TeacherModelAdmin(admin.ModelAdmin):
     """讲师信息的模型管理器"""
-    list_display = ["id", "name", "avatar", "title", "role", "signature"]
+    list_display = ["id", "name", "avatar_small", "title", "role", "signature"]
     list_per_page = 10
     search_fields = ["name", "title", "role", "signature"]
 
